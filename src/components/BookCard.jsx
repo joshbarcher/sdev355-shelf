@@ -1,6 +1,26 @@
-import StatusTag from "./StatusTag.jsx";
+import { useState } from "react";
 
-function BookCard({ title, author, status, rating = 0, tags = [], onFinish }) {
+import StatusTag, { STATUSES, LABELS } from "./StatusTag.jsx";
+
+function BookCard({
+  title,
+  author,
+  status,
+  rating = 0,
+  tags = [],
+  notes,
+  onStatusChange,
+}) {
+  // w3.2: state that is CORRECTLY local. Whether this one card is showing its
+  // notes is read by this card and by nobody else -- no sibling needs it, the
+  // app does not need it, so lifting it would only mean more props. "Who reads
+  // this value?" answers "just me", and the answer is: leave it here.
+  const [notesShown, setNotesShown] = useState(false);
+
+  function handleToggleNotes() {
+    setNotesShown(!notesShown);
+  }
+
   // A ternary: exactly two outcomes, and one of them always happens.
   const cardClass = status === "finished" ? "card card--finished" : "card";
 
@@ -28,13 +48,21 @@ function BookCard({ title, author, status, rating = 0, tags = [], onFinish }) {
     </ul>
   );
 
-  // w3.1: one button, and all it does is call a function it was handed. The
-  // handler itself lives with the state, up in App. Events proper are w3.2 --
-  // this is the least that makes state visible on the page.
-  const finishButton = status !== "finished" && (
-    <button className="card__finish" onClick={onFinish}>
-      Mark as finished
-    </button>
+  // w3.2: three buttons, ONE handler. What makes them three different buttons
+  // is the argument -- and an argument is the whole reason to reach for an
+  // arrow instead of handing over a bare handler name.
+  const actions = (
+    <div className="card__actions">
+      {STATUSES.map((next) => (
+        <button
+          key={next}
+          className={next === status ? "chip chip--on" : "chip"}
+          onClick={() => onStatusChange(next)}
+        >
+          {LABELS[next]}
+        </button>
+      ))}
+    </div>
   );
 
   // Several variables, one return. The JSX below reads as the shape of the
@@ -50,7 +78,14 @@ function BookCard({ title, author, status, rating = 0, tags = [], onFinish }) {
 
       {ratingLine}
       {tagList}
-      {finishButton}
+      {actions}
+
+      {notes && (
+        <button className="card__notes-toggle" onClick={handleToggleNotes}>
+          {notesShown ? "Hide notes" : "Show notes"}
+        </button>
+      )}
+      {notesShown && <p className="card__notes">{notes}</p>}
     </article>
   );
 }

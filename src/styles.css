@@ -117,18 +117,125 @@ body {
 .status--want     { background: rgba(166, 200, 240, 0.16); color: var(--peri); }
 .status--finished { background: rgba(159, 216, 196, 0.16); color: var(--mint); }
 
-/* The one button on the page (w3.1). It changes state; that is its whole job. */
-.card__finish {
-  margin: 12px 0 0;
+/* w3.2 -- the controls the session adds.
+   The single "Mark as finished" button became three status chips: one handler,
+   three arguments. */
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.chip {
   font: inherit;
   font-size: 12px;
   letter-spacing: 0.3px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.chip:hover { background: rgba(255, 255, 255, 0.12); color: var(--text); }
+.chip:active { transform: translateY(1px); }
+.chip--on {
+  color: var(--bg);
+  background: var(--peach);
+  border-color: var(--peach);
+  font-weight: 600;
+}
+
+/* Notes -- state that is correctly local to one card. */
+.card__notes-toggle {
+  display: block;
+  margin: 10px 0 0;
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  color: var(--peri);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.card__notes {
+  margin: 8px 0 0;
+  padding: 9px 11px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 2px solid var(--peri);
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* The header checkbox -- shows a value it does not own. */
+.header__toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.header__toggle input {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--peach);
+}
+
+/* The banner -- reads a value the cards set. */
+.now {
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  background: rgba(240, 223, 160, 0.10);
+  border: 1px solid rgba(240, 223, 160, 0.35);
+  border-radius: 8px;
+  font-size: 15px;
+}
+.now__author { color: var(--muted); font-size: 13px; }
+.now--empty {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+  font-style: italic;
+}
+.now--empty strong { color: var(--text); font-style: normal; }
+
+/* The two controlled inputs. */
+.search { display: flex; gap: 8px; margin-bottom: 10px; }
+.search__input,
+.add__input {
+  flex: 1;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 9px 12px;
+}
+.search__input:focus,
+.add__input:focus { outline: none; border-color: var(--peach); }
+.search__input::placeholder,
+.add__input::placeholder { color: var(--star-empty); }
+
+.search__clear,
+.add__button {
+  font: inherit;
+  font-size: 13px;
   color: var(--text);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 6px 12px;
+  border-radius: 7px;
+  padding: 8px 14px;
   cursor: pointer;
 }
-.card__finish:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--mint); }
-.card__finish:active { transform: translateY(1px); }
+.search__clear:hover,
+.add__button:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--peach); }
+
+.add { display: flex; gap: 8px; margin-bottom: 26px; }

@@ -1,6 +1,6 @@
 import StatusTag from "./StatusTag.jsx";
 
-function BookCard({ title, author, status, rating = 0, tags = [] }) {
+function BookCard({ title, author, status, rating = 0, tags = [], onFinish }) {
   // A ternary: exactly two outcomes, and one of them always happens.
   const cardClass = status === "finished" ? "card card--finished" : "card";
 
@@ -28,6 +28,15 @@ function BookCard({ title, author, status, rating = 0, tags = [] }) {
     </ul>
   );
 
+  // w3.1: one button, and all it does is call a function it was handed. The
+  // handler itself lives with the state, up in App. Events proper are w3.2 --
+  // this is the least that makes state visible on the page.
+  const finishButton = status !== "finished" && (
+    <button className="card__finish" onClick={onFinish}>
+      Mark as finished
+    </button>
+  );
+
   // Several variables, one return. The JSX below reads as the shape of the
   // card; the decisions that built it are above, out of the way.
   return (
@@ -41,6 +50,7 @@ function BookCard({ title, author, status, rating = 0, tags = [] }) {
 
       {ratingLine}
       {tagList}
+      {finishButton}
     </article>
   );
 }

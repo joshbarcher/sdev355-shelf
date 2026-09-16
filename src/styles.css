@@ -116,3 +116,19 @@ body {
 .status--reading  { background: rgba(240, 223, 160, 0.16); color: var(--gold); }
 .status--want     { background: rgba(166, 200, 240, 0.16); color: var(--peri); }
 .status--finished { background: rgba(159, 216, 196, 0.16); color: var(--mint); }
+
+/* The one button on the page (w3.1). It changes state; that is its whole job. */
+.card__finish {
+  margin: 12px 0 0;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.card__finish:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--mint); }
+.card__finish:active { transform: translateY(1px); }

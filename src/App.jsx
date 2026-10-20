@@ -1,92 +1,101 @@
 import { useEffect, useState } from "react";
 
+import { API } from "./api.js";
 import Header from "./components/Header.jsx";
 import Panel from "./components/Panel.jsx";
 import BookCard from "./components/BookCard.jsx";
+import BookDetail from "./components/BookDetail.jsx";
 import NowReading from "./components/NowReading.jsx";
 import SearchBox from "./components/SearchBox.jsx";
 import AddBook from "./components/AddBook.jsx";
+import ShelfBody from "./components/ShelfBody.jsx";
 
-// w2.1: the books are data now. Every book carries an id (a stable key that
-// belongs to the book) and a tags array (a list inside each list item).
-// w3.2 added `notes`, which is what a card's Show notes button reveals.
-const BOOKS = [
-  {
-    id: "b1",
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    status: "reading",
-    rating: 4,
-    tags: ["classic", "fiction"],
-    notes: "The courtroom chapters are the ones people remember, but it is Scout who carries it.",
-  },
-  {
-    id: "b2",
-    title: "The Hunger Games",
-    author: "Suzanne Collins",
-    status: "reading",
-    rating: 5,
-    tags: ["dystopia", "ya"],
-    notes: "Read the first fifty pages on a lunch break and lost the rest of the day.",
-  },
-  {
-    id: "b3",
-    title: "Harry Potter and the Sorcerer's Stone",
-    author: "J.K. Rowling",
-    status: "want",
-    tags: ["fantasy", "series"],
-    notes: "Somehow never read it. Everyone insists I start here rather than the films.",
-  },
-  {
-    id: "b4",
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    status: "want",
-    tags: ["classic"],
-    notes: "Told it is much funnier than its reputation suggests.",
-  },
-  {
-    id: "b5",
-    title: "1984",
-    author: "George Orwell",
-    status: "finished",
-    rating: 4,
-    tags: ["classic", "dystopia"],
-    notes: "The appendix on Newspeak is the part that actually keeps you up at night.",
-  },
-];
-
+// w4.2: THE HARDCODED ARRAY IS GONE.
+//
+// It used to be right here -- fifty lines of books that shipped with the app.
+// The books now come from `demos/355/shelf-api`. It seeds fifteen: the five
+// this app used to hard-code, byte for byte, plus ten more -- so the proof that
+// this session worked is that the shelf now shows fifteen books, not five.
 function App() {
-  // w3.1: the array is state. BOOKS is only the value it STARTS at -- React
-  // holds what is in `books` from here on, and the page redraws when that
-  // value is replaced.
-  const [books, setBooks] = useState(BOOKS);
+  // Three pieces of state, and each starts where it does for a reason.
+  //
+  // `books` starts as [] and not as null, because the first render happens
+  // BEFORE the request is even sent and `[].map()` is a list of nothing
+  // rather than a crash. `loading` starts true, because the app is already
+  // waiting by the time the first pixel is drawn. `error` starts null, which
+  // is "nothing has gone wrong", not "" -- an empty string is a message.
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // w3.2: three more pieces of state, and every one of them is HERE for the
-  // same reason -- more than one component below reads it, and state only ever
-  // travels down. The half-typed title in the Add form is the one that is NOT
-  // here, because only the form reads it.
+  // The same four from weeks 2 and 3. Nothing about fetching changed them.
   const [hideFinished, setHideFinished] = useState(false);
   const [query, setQuery] = useState("");
   const [currentId, setCurrentId] = useState(null);
 
-  // Never change the array React is holding. map() builds a new one, and the
-  // single book that matched becomes a new object; every other book is the
-  // same object it always was, and that is fine.
+  // ── Asking for the books ──────────────────────────────────────────────────
+  //
+  // `load` lives INSIDE the effect. w4.1's rule is that the array lists every
+  // value the setup reads; a function declared in the component body is a new
+  // object on every render, so a `load` outside the effect would have to be
+  // listed and would re-run the effect after every render. Inside, the setup
+  // reads only state setters, which never change between renders.
+  //
+  // Try again cannot call a function that lives inside the effect, so it asks
+  // for another run instead: `reloads` is in the array, and retry() bumps it.
+  // A value does not have to be read to be listed. w5.1's useFetch keeps this
+  // exact shape.
+  const [reloads, setReloads] = useState(0);
+
+  useEffect(() => {
+    async function load() {
+      // A retry starts from "waiting", not from the old error.
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch(API);
+
+        // fetch does NOT reject on a 404 or a 500. It rejects only when the
+        // request never happened -- no network, bad host, blocked by the
+        // browser. A 500 is a request that worked perfectly and came back
+        // carrying bad news, and `catch` will never see it unless you throw.
+        if (!res.ok) throw new Error(`the server answered ${res.status}`);
+
+        const data = await res.json();
+        setBooks(data);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        // The only branch BOTH paths reach. The last line of `try` is not:
+        // put setLoading(false) there and a failed request leaves the waiting
+        // screen up for good.
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [reloads]);
+
+  // No ignore flag here, unlike BookDetail: this effect re-runs only when Try
+  // again is clicked, and that button exists only after the previous request
+  // has finished, so two of these requests are never in flight at once.
+  function retry() {
+    setReloads((n) => n + 1);
+  }
+
+  // Marking a book is still local. The API wants a token before it will change
+  // anything, and a token is week 9 -- so for now the screen is updated and
+  // the server is not told. w8.2 is where a change first leaves the browser.
   function changeStatus(id, status) {
     setBooks(
       books.map((book) => (book.id === id ? { ...book, status } : book))
     );
 
-    // Starting a book is also what the banner means by "now reading".
     if (status === "reading") {
       setCurrentId(id);
     } else if (id === currentId) {
-      // ...and a book you have just put back down is not one you are reading.
-      // w4.1 needs this: emptying the banner unmounts NowReading's timer, and
-      // an unmount is when React runs that effect's cleanup. Without this line
-      // there is no way back to "nothing is current" and the cleanup can only
-      // be described, not watched.
       setCurrentId(null);
     }
   }
@@ -100,8 +109,6 @@ function App() {
       tags: [],
     };
 
-    // A new array, not books.push(...) -- push changes the array React is
-    // already holding, and React would be handed the same array it had.
     setBooks([...books, book]);
   }
 
@@ -122,20 +129,22 @@ function App() {
   // Nothing matches this one yet -- it is what Panel's early return is for.
   const abandoned = shown.filter((book) => book.status === "abandoned");
 
+  // One line, no new state: a count off the real data, worked out during the
+  // render that needs it. Store it and you own the job of keeping it right.
+  const finishedCount = books.filter((b) => b.status === "finished").length;
+
   // w4.1, effect one: the browser tab is not React's.
   //
   // `document.title` is a thing outside the component -- React did not make
   // it, does not own it and will never put it back. Setting it during render
   // would be reaching outside the call mid-render (w2.2's word: impure); an
-  // effect is where that is allowed, because React runs it AFTER the render
-  // has finished and the DOM is updated -- usually after the paint, though
-  // after a click or keystroke React may run it just before.
+  // effect is where that is allowed, because React runs it AFTER the screen
+  // has been painted.
   //
   // The array lists what the setup READ, and nothing else. It reads
   // `shown.length` and `books.length` for the numbers, and `query` because it
-  // is what the branch asks about -- miss `query` and a search that leaves
-  // the count unchanged keeps the old wording: with Hide finished on, typing
-  // "r" still shows four books, so the tab stays on "4 books".
+  // is what the branch asks about -- miss `query` and the wording sticks on
+  // whichever branch ran first even as the count updates.
   //
   // `shown.length`, not `shown`: the filter above builds a NEW array on every
   // render, so a dependency on `shown` would never match and this would run
@@ -197,23 +206,34 @@ function App() {
     ));
   }
 
+
   return (
     <div className="app">
       <Header
         owner="Josh"
         bookCount={books.length}
+        finishedCount={finishedCount}
         hideFinished={hideFinished}
         onHideFinishedChange={setHideFinished}
       />
 
       <NowReading book={current} />
+      {currentId && <BookDetail id={currentId} />}
+
       <SearchBox value={query} onChange={setQuery} />
       <AddBook onAdd={addBook} />
 
-      <Panel title="Currently reading">{cards(reading)}</Panel>
-      <Panel title="Want to read">{cards(want)}</Panel>
-      <Panel title="Finished">{cards(finished)}</Panel>
-      <Panel title="Gave up on">{cards(abandoned)}</Panel>
+      <ShelfBody
+        loading={loading}
+        error={error}
+        books={books}
+        onRetry={retry}
+      >
+        <Panel title="Currently reading">{cards(reading)}</Panel>
+        <Panel title="Want to read">{cards(want)}</Panel>
+        <Panel title="Finished">{cards(finished)}</Panel>
+        <Panel title="Gave up on">{cards(abandoned)}</Panel>
+      </ShelfBody>
     </div>
   );
 }

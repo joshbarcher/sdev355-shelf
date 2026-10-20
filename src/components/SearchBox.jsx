@@ -8,14 +8,14 @@ function SearchBox({ value, onChange }) {
   return (
     <div className="search">
       <input
-        className="search__input"
+        className="search-input"
         type="search"
         value={value}
         placeholder="Search by title"
         onChange={(e) => onChange(e.target.value)}
       />
       {value !== "" && (
-        <button className="search__clear" onClick={() => onChange("")}>
+        <button className="search-clear" onClick={() => onChange("")}>
           Clear
         </button>
       )}

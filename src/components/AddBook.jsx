@@ -23,12 +23,12 @@ function AddBook({ onAdd }) {
   return (
     <form className="add" onSubmit={handleSubmit}>
       <input
-        className="add__input"
+        className="add-input"
         value={draft}
         placeholder="Add a book by title"
         onChange={(e) => setDraft(e.target.value)}
       />
-      <button className="add__button">Add</button>
+      <button className="add-button">Add</button>
     </form>
   );
 }

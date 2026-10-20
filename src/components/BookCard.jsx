@@ -22,15 +22,15 @@ function BookCard({
   }
 
   // A ternary: exactly two outcomes, and one of them always happens.
-  const cardClass = status === "finished" ? "card card--finished" : "card";
+  const cardClass = status === "finished" ? "card card-finished" : "card";
 
   // One thing or nothing, so &&. Note `rating > 0` and not a bare `rating`:
   // 0 is falsy, and && hands back its LEFT side when that side is falsy, so
   // a bare `rating &&` would print a literal 0 on the page.
   const ratingLine = rating > 0 && (
-    <p className="card__rating">
-      <span className="card__stars">{"★".repeat(rating)}</span>
-      <span className="card__stars card__stars--empty">
+    <p className="card-rating">
+      <span className="card-stars">{"★".repeat(rating)}</span>
+      <span className="card-stars card-stars-empty">
         {"☆".repeat(5 - rating)}
       </span>
     </p>
@@ -39,7 +39,7 @@ function BookCard({
   // A list inside a list. This key only has to be unique among ITS siblings,
   // so a tag name is fine even though the book list outside is keyed by id.
   const tagList = tags.length > 0 && (
-    <ul className="card__tags">
+    <ul className="card-tags">
       {tags.map((tag) => (
         <li key={tag} className="tag">
           {tag}
@@ -52,11 +52,11 @@ function BookCard({
   // is the argument -- and an argument is the whole reason to reach for an
   // arrow instead of handing over a bare handler name.
   const actions = (
-    <div className="card__actions">
+    <div className="card-actions">
       {STATUSES.map((next) => (
         <button
           key={next}
-          className={next === status ? "chip chip--on" : "chip"}
+          className={next === status ? "chip chip-on" : "chip"}
           onClick={() => onStatusChange(next)}
         >
           {LABELS[next]}
@@ -69,23 +69,23 @@ function BookCard({
   // card; the decisions that built it are above, out of the way.
   return (
     <article className={cardClass}>
-      <div className="card__top">
-        <h3 className="card__title">{title}</h3>
+      <div className="card-top">
+        <h3 className="card-title">{title}</h3>
         <StatusTag status={status} />
       </div>
 
-      <p className="card__author">{author}</p>
+      <p className="card-author">{author}</p>
 
       {ratingLine}
       {tagList}
       {actions}
 
       {notes && (
-        <button className="card__notes-toggle" onClick={handleToggleNotes}>
+        <button className="card-notes-toggle" onClick={handleToggleNotes}>
           {notesShown ? "Hide notes" : "Show notes"}
         </button>
       )}
-      {notesShown && <p className="card__notes">{notes}</p>}
+      {notesShown && <p className="card-notes">{notes}</p>}
     </article>
   );
 }

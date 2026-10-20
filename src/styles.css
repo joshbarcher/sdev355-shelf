@@ -37,13 +37,13 @@ body {
   border-bottom: 1px solid var(--line);
   margin-bottom: 28px;
 }
-.header__title {
+.header-title {
   margin: 0;
   font-size: 34px;
   font-weight: 600;
   letter-spacing: -0.5px;
 }
-.header__meta { margin: 0; color: var(--muted); font-size: 14px; }
+.header-meta { margin: 0; color: var(--muted); font-size: 14px; }
 
 /* Panel */
 .panel {
@@ -52,7 +52,7 @@ body {
   padding: 20px 20px 20px;
   margin-bottom: 18px;
 }
-.panel__title {
+.panel-title {
   margin: 0 0 16px;
   font-size: 13px;
   font-weight: 700;
@@ -60,7 +60,7 @@ body {
   text-transform: uppercase;
   color: var(--peach);
 }
-.panel__body { display: flex; flex-direction: column; gap: 14px; }
+.panel-body { display: flex; flex-direction: column; gap: 14px; }
 
 /* BookCard */
 .card {
@@ -68,23 +68,23 @@ body {
   border-radius: 10px;
   padding: 14px 16px;
 }
-.card__top {
+.card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
 }
-.card__title { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.3; }
-.card__author { margin: 5px 0 10px; color: var(--muted); font-size: 14px; }
-.card__rating { margin: 0; font-size: 15px; letter-spacing: 2px; }
-.card__stars { color: var(--gold); }
-.card__stars--empty { color: var(--star-empty); }
+.card-title { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.3; }
+.card-author { margin: 5px 0 10px; color: var(--muted); font-size: 14px; }
+.card-rating { margin: 0; font-size: 15px; letter-spacing: 2px; }
+.card-stars { color: var(--gold); }
+.card-stars-empty { color: var(--star-empty); }
 
-.card--finished { border-left: 3px solid var(--mint); }
-.panel__none { margin: 0; color: var(--muted); font-size: 14px; font-style: italic; }
+.card-finished { border-left: 3px solid var(--mint); }
+.panel-none { margin: 0; color: var(--muted); font-size: 14px; font-style: italic; }
 
 /* Tags -- the list inside each card (w2.1) */
-.card__tags {
+.card-tags {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
@@ -113,14 +113,14 @@ body {
   border-radius: 999px;
   white-space: nowrap;
 }
-.status--reading  { background: rgba(240, 223, 160, 0.16); color: var(--gold); }
-.status--want     { background: rgba(166, 200, 240, 0.16); color: var(--peri); }
-.status--finished { background: rgba(159, 216, 196, 0.16); color: var(--mint); }
+.status-reading  { background: rgba(240, 223, 160, 0.16); color: var(--gold); }
+.status-want     { background: rgba(166, 200, 240, 0.16); color: var(--peri); }
+.status-finished { background: rgba(159, 216, 196, 0.16); color: var(--mint); }
 
 /* w3.2 -- the controls the session adds.
    The single "Mark as finished" button became three status chips: one handler,
    three arguments. */
-.card__actions {
+.card-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -139,7 +139,7 @@ body {
 }
 .chip:hover { background: rgba(255, 255, 255, 0.12); color: var(--text); }
 .chip:active { transform: translateY(1px); }
-.chip--on {
+.chip-on {
   color: var(--bg);
   background: var(--peach);
   border-color: var(--peach);
@@ -147,7 +147,7 @@ body {
 }
 
 /* Notes -- state that is correctly local to one card. */
-.card__notes-toggle {
+.card-notes-toggle {
   display: block;
   margin: 10px 0 0;
   padding: 0;
@@ -160,7 +160,7 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.card__notes {
+.card-notes {
   margin: 8px 0 0;
   padding: 9px 11px;
   background: rgba(255, 255, 255, 0.04);
@@ -171,7 +171,7 @@ body {
 }
 
 /* The header checkbox -- shows a value it does not own. */
-.header__toggle {
+.header-toggle {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -180,7 +180,7 @@ body {
   cursor: pointer;
   user-select: none;
 }
-.header__toggle input {
+.header-toggle input {
   width: 15px;
   height: 15px;
   cursor: pointer;
@@ -196,20 +196,29 @@ body {
   border-radius: 8px;
   font-size: 15px;
 }
-.now__author { color: var(--muted); font-size: 13px; }
-.now--empty {
+.now-author { color: var(--muted); font-size: 13px; }
+/* w4.1 -- the reading-session timer, under the banner it belongs to. */
+.now-timer {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.now-empty {
   background: var(--panel);
   border: 1px solid var(--line);
   color: var(--muted);
   font-size: 14px;
   font-style: italic;
 }
-.now--empty strong { color: var(--text); font-style: normal; }
+.now-empty strong { color: var(--text); font-style: normal; }
 
 /* The two controlled inputs. */
 .search { display: flex; gap: 8px; margin-bottom: 10px; }
-.search__input,
-.add__input {
+.search-input,
+.add-input {
   flex: 1;
   font: inherit;
   font-size: 14px;
@@ -219,13 +228,13 @@ body {
   border-radius: 7px;
   padding: 9px 12px;
 }
-.search__input:focus,
-.add__input:focus { outline: none; border-color: var(--peach); }
-.search__input::placeholder,
-.add__input::placeholder { color: var(--star-empty); }
+.search-input:focus,
+.add-input:focus { outline: none; border-color: var(--peach); }
+.search-input::placeholder,
+.add-input::placeholder { color: var(--star-empty); }
 
-.search__clear,
-.add__button {
+.search-clear,
+.add-button {
   font: inherit;
   font-size: 13px;
   color: var(--text);
@@ -235,7 +244,7 @@ body {
   padding: 8px 14px;
   cursor: pointer;
 }
-.search__clear:hover,
-.add__button:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--peach); }
+.search-clear:hover,
+.add-button:hover { background: rgba(255, 255, 255, 0.12); border-color: var(--peach); }
 
 .add { display: flex; gap: 8px; margin-bottom: 26px; }

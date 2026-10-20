@@ -7,16 +7,16 @@ function Panel({ title, children }) {
   if (isEmpty) {
     return (
       <section className="panel">
-        <h2 className="panel__title">{title}</h2>
-        <p className="panel__none">Nothing here yet.</p>
+        <h2 className="panel-title">{title}</h2>
+        <p className="panel-none">Nothing here yet.</p>
       </section>
     );
   }
 
   return (
     <section className="panel">
-      <h2 className="panel__title">{title}</h2>
-      <div className="panel__body">{children}</div>
+      <h2 className="panel-title">{title}</h2>
+      <div className="panel-body">{children}</div>
     </section>
   );
 }

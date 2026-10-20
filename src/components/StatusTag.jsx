@@ -10,7 +10,7 @@ export const LABELS = {
 };
 
 function StatusTag({ status }) {
-  return <span className={`status status--${status}`}>{LABELS[status]}</span>;
+  return <span className={`status status-${status}`}>{LABELS[status]}</span>;
 }
 
 export default StatusTag;

@@ -5,13 +5,13 @@ function Header({ owner, bookCount, hideFinished, onHideFinishedChange }) {
   return (
     <header className="header">
       <div>
-        <h1 className="header__title">Shelf</h1>
-        <p className="header__meta">
+        <h1 className="header-title">Shelf</h1>
+        <p className="header-meta">
           {owner} · {bookCount} books
         </p>
       </div>
 
-      <label className="header__toggle">
+      <label className="header-toggle">
         <input
           type="checkbox"
           checked={hideFinished}
